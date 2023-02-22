@@ -173,7 +173,30 @@ public class Number {
      * @throws IllegalArgumentException - when digit is invalid (i.e., not a single digit or negative)
      */
     public Number multiplyByDigit​(int digit) throws IllegalArgumentException {
-        return new Number("");
+        // check if digit is a decimal digit
+        isValidDigit(String.valueOf(digit));
+        Number finalNumber = new Number();
+
+        Node current = this.head;
+        int sum = 0, remainder = 0;
+        while (current != null) {
+            // multiply digit starting from the ones place of this object
+            sum = remainder + (current.data * digit);
+            if (sum > 9) {
+                remainder = (sum - (sum % 10)) / 10;
+            } else remainder = 0;
+            sum = sum % 10;
+
+            System.out.println("sum: " + sum);
+            System.out.println("remainder: " + remainder);
+            appendNode(finalNumber, sum);
+
+            // advance to next node in this object
+            current = current.next;
+        }
+
+        if (remainder > 0) appendNode(finalNumber, remainder);
+        return finalNumber;
     }
 
 

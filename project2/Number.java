@@ -1,6 +1,6 @@
 package project2;
 
-public class Number {
+public class Number implements Comparable<Number> {
 
     /** 
      * Define the internal Node class that holds a single digit 
@@ -112,18 +112,18 @@ public class Number {
      * @param value the integer value to be stored in the new node.
      */
     private void appendNode(Number number, int value) {
-        Node n = new Node(value);
+        Node newNode = new Node(value);
 
         // least significant digit stored as head, most significant digit stored as tail
         if (number.head == null) {
-            number.head = n;
-            number.tail = n; 
+            number.head = newNode;
+            number.tail = newNode; 
         } else {
-            number.tail.next = n;
-            number.tail = n;
+            number.tail.next = newNode;
+            number.tail = newNode;
         }
 
-        this.digitCount++;
+        number.digitCount++;
     }
 
 
@@ -159,7 +159,7 @@ public class Number {
             if (currentB != null) currentB = currentB.next;
         }
 
-        if (remainder > 0) appendNode(finalNumber, sum);
+        if (remainder > 0) appendNode(finalNumber, remainder);
         return finalNumber;
     }
 
@@ -173,8 +173,9 @@ public class Number {
      * @throws IllegalArgumentException - when digit is invalid (i.e., not a single digit or negative)
      */
     public Number multiplyByDigit​(int digit) throws IllegalArgumentException {
-        // check if digit is a decimal digit
-        isValidDigit(String.valueOf(digit));
+        // check if digit is a sinlge decimal digit
+        if ((digit % 100) > 10 || digit < 0) throw new IllegalArgumentException("Must be a positive single digit only");
+        // isValidDigit(String.valueOf(digit));
         Number finalNumber = new Number();
 
         Node current = this.head;
@@ -328,11 +329,18 @@ public class Number {
      * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than other
      * @throws NullPointerException - if other is null
      */
-    @Override
     public int compareTo​(Number other) throws NullPointerException {
         isNull(other);
-        return 0;
+
+        // this > other --> return pos
+        // this == other --> return 0
+        // this < other --> return neg
+        // check length --> more digits --> bigger number 
+        if (this.digitCount > other.digitCount) return 1;
+        else if (this.digitCount < other.digitCount) return -1;
+
+        // cases where same length of digits
+
+        else return 0;
     }
-
-
 }

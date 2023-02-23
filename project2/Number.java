@@ -79,7 +79,7 @@ public class Number {
      */
     private void isNull(Object obj) throws NullPointerException {
         if (obj == null) 
-            throw new NullPointerException("number cannot be null");
+            throw new NullPointerException("Number cannot be null");
     }
 
 
@@ -92,7 +92,7 @@ public class Number {
     private void isValidDigit(String number) throws IllegalArgumentException {
         String digits = "[0-9]+";
         if ( !(number.matches(digits)) ) 
-            throw new IllegalArgumentException("invalid number: the input string contains non-digit characters");          
+            throw new IllegalArgumentException("Invalid number: the input string contains non-digit characters");          
     }
 
 
@@ -186,9 +186,6 @@ public class Number {
                 remainder = (sum - (sum % 10)) / 10;
             } else remainder = 0;
             sum = sum % 10;
-
-            System.out.println("sum: " + sum);
-            System.out.println("remainder: " + remainder);
             appendNode(finalNumber, sum);
 
             // advance to next node in this object
@@ -197,6 +194,55 @@ public class Number {
 
         if (remainder > 0) appendNode(finalNumber, remainder);
         return finalNumber;
+    }
+
+
+    /**
+     * Computes the product of this object and other. Returns the result in a new object. 
+     * This object is not modified by call to multiply.
+     * @param other - the value to be multiplied by this object
+     * @return a Number object whose value is equal to the product of this object and other
+     * @throws NullPointerException - if other is null
+     */
+    public Number multiply(Number other) throws NullPointerException {
+        isNull(other);
+        Number finalNumber = new Number();
+        
+        Node currentB = other.head; // iterator for the digits in the multiplier -> other
+        Number product = new Number();
+        int digit, digitsPlace = 0; // maintain a counter to let us know what digits place of other we are at
+
+        // continue while there are digits remaining in the multiplier
+        while (currentB != null) {
+            // parses a single digit from other object 
+            digit = currentB.data;
+            product = this.multiplyByDigit​(digit);
+            addZeroNodeAtStart(product, digitsPlace);
+            finalNumber = finalNumber.add(product); // maintain and update the current sum up to the digit being parsed
+            digitsPlace++;
+
+            // advance to next node in other object
+            currentB = currentB.next;
+        }
+
+        return finalNumber;
+    }
+
+
+    /**
+     * Prepend the specified number of zero nodes to the start of the linked list.
+     * @param list the linked list to which the zero nodes should be added
+     * @param count the number of zero nodes to add to the start of the list
+     * @throws NullPointerException if the linked list is null
+     */
+    private void addZeroNodeAtStart(Number list, int count) throws NullPointerException {
+        isNull(list); // Check if the linked list is null
+        // Add the specified number of zero nodes to the start of the linked list
+        for (int i = 0; i < count; i++) {
+            Node newNode = new Node(0);
+            newNode.next = list.head;
+            list.head = newNode;
+        }
     }
 
 

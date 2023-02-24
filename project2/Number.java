@@ -40,6 +40,16 @@ public class Number implements Comparable<Number> {
         this.digitCount = 0;
         createLinkedListFromNumber(number);
     }
+    
+
+    public int getTailValue() {
+        return tail.data;
+    }
+
+
+    public int getHeadValue() {
+        return head.data;
+    }
 
 
     /**
@@ -327,20 +337,61 @@ public class Number implements Comparable<Number> {
      * than the value of other. Returns zero if two values are the same.
      * @param other - the object to be compared with this object
      * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than other
-     * @throws NullPointerException - if other is null
+     * @throws NullPointerException - if this or other is null
      */
-    public int compareTo​(Number other) throws NullPointerException {
+    public int compareTo(Number other) throws NullPointerException {
+        isNull(this);
         isNull(other);
-
-        // this > other --> return pos
-        // this == other --> return 0
-        // this < other --> return neg
-        // check length --> more digits --> bigger number 
         if (this.digitCount > other.digitCount) return 1;
         else if (this.digitCount < other.digitCount) return -1;
 
-        // cases where same length of digits
+        // Create copies of the lists to avoid modifying them in place
+        Number thisCopy = new Number(this.toString());
+        Number otherCopy = new Number(other.toString());
 
-        else return 0;
+        // reverse Number this and other
+        thisCopy.reverseNumbersList();
+        otherCopy.reverseNumbersList();
+
+        // check pairs of digits of both numbers starting from their head until all digits have been exhausted
+        Node curr1 = thisCopy.head;
+        Node curr2 = otherCopy.head;
+        while (curr1 != null) {
+            if (curr1.data > curr2.data) return 1;
+            else if (curr1.data < curr2.data) return -1;
+
+            // advance to next digit in list
+            curr1 = curr1.next;
+            curr2 = curr2.next;
+        }
+        
+        return 0;
     }
+
+
+    /**
+     * Traverses the Number list starting from its head, reversing the next reference of each node 
+     * to point to the previous node until no more nodes left. This is accomplished using three Node 
+     * variables: cur, prev, and next. After the list is reversed, the method switches the head and tail of the list. 
+     * @throws NullPointerException - if this is null
+     */
+    private void reverseNumbersList() throws NullPointerException {
+        isNull(this);
+        if (this.digitCount == 1) return;
+
+        // reverse the list
+        Node cur = this.head;
+        Node prev = null;
+        while (cur != null) {
+            Node next = cur.next; // store the next node in the list
+            cur.next = prev;
+            prev = cur;
+            cur = next;
+        }
+        // swtich the head and the tail of the list
+        // head -> tail and tail -> head
+        this.tail = this.head;
+        this.head = prev;
+        this.tail.next = null;
+    } 
 }
